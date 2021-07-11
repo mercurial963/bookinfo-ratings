@@ -1,8 +1,7 @@
-# Bookinfo Rating Service
+## How to run with Docker
 
-Rating service has been developed on NodeJS
+```bash
+# Build Docker Image for rating service
+docker-compose up -d --build
 
-## License
-
-MIT License
-
+* Test with path `/ratings/1` and `/health`
