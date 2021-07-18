@@ -1,33 +1,3 @@
-Skip to content
-Search or jump to…
-
-Pull requests
-Issues
-Marketplace
-Explore
- 
-@mercurial963 
-opsta
-/
-bookinfo
-2
-027
-Code
-Issues
-Pull requests
-Actions
-Projects
-Wiki
-Security
-Insights
-bookinfo/src/ratings/ratings.js /
-
-Jirayut Nimsaeng Improve security connect to database
-Latest commit ffcbe77 on Mar 5
- History
- 0 contributors
-267 lines (244 sloc)  8.71 KB
-  
 // Copyright 2017 Istio Authors
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -295,16 +265,3 @@ var server = http.createServer(handleRequest)
 server.listen(port, function () {
   console.log('Server listening on: http://0.0.0.0:%s', port)
 })
-© 2021 GitHub, Inc.
-Terms
-Privacy
-Security
-Status
-Docs
-Contact GitHub
-Pricing
-API
-Training
-Blog
-About
-Loading complete
