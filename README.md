@@ -29,7 +29,7 @@ helm install mongodb bitnami/mongodb --set persistence.enabled=false
 kubectl create configmap bookinfo-dev-ratings-mongodb-initdb --from-file=databases/ratings_data.json --from-file=databases/scripts.sh
 
 # Create secret mongodb 
-kubectl apply -f bookinfo-dev-ratings-mongodb-secret.yaml
+kubectl apply -f bookinfo-secret/bookinfo-dev-ratings-mongodb-secret.yaml
 
 kubectl get secret,configmap
 ```
@@ -40,7 +40,7 @@ install bookinfo-ratings
 ```console
 
 # secret for pull image from ghcr.io
-kubectl apply -f ./secret/ghcr-secret.yaml
+kubectl apply -f bookinfo-secret/ghcr-secret.yaml
 
 # install bookinfo-ratings
 helm install -f helm-values/values-bookinfo-dev-ratings.yaml bookinfo-dev-ratings helm/
