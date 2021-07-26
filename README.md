@@ -7,8 +7,8 @@ docker-compose up -d --build
 ```
 ### check result
 
-[localhost:8080/health](localhost:8080/health)  
-[localhost:8080/ratings/ratings/1](localhost:8080/ratings/ratings/1)
+[localhost:8080/health](http://localhost:8080/health)  
+[localhost:8080/ratings/ratings/1](http://localhost:8080/ratings/ratings/1)
 
 ## How to run with Helm (dev)
 
@@ -69,6 +69,6 @@ kubectl port-forward svc/bookinfo-dev-ratings 8080:8080
 ```
 ### Check result
 
-[localhost:8080/health](localhost:8080/health)  
-[localhost:8080/ratings/ratings/1](localhost:8080/ratings/ratings/1)
+[localhost:8080/health](http://127.0.0.1:8080/health)  
+[localhost:8080/ratings/ratings/1](http://localhost:8080/ratings/ratings/1)
 
