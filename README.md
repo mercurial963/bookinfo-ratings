@@ -4,11 +4,12 @@
 # build Docker Image for rating service
 docker-compose up -d --build
 
-# check result
-[localhost:8080/health](https:/localhost:8080/health)
-[localhost:8080/ratings/ratings/1](https:/localhost:8080/ratings/ratings/1)
-
 ```
+### check result
+
+[localhost:8080/health](localhost:8080/health)  
+[localhost:8080/ratings/ratings/1](localhost:8080/ratings/ratings/1)
+
 ## How to run with Helm (dev)
 
 ### Prepare helm package mongodb
@@ -66,9 +67,8 @@ helm install -f helm-values/values-bookinfo-dev-ratings.yaml bookinfo-dev-rating
 kubectl port-forward svc/bookinfo-dev-ratings 8080:8080
 
 ```
-### check result
-```console
-[localhost:8080/health](https:/localhost:8080/health)
-[localhost:8080/ratings/ratings/1](https:/localhost:8080/ratings/ratings/1)
+### Check result
 
-```
+[localhost:8080/health](localhost:8080/health)  
+[localhost:8080/ratings/ratings/1](localhost:8080/ratings/ratings/1)
+
