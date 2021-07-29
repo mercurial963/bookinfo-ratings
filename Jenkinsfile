@@ -25,6 +25,10 @@ pipeline {
           tty: true
     """
     } // End kubernetes
+
+  environment {
+    ENV_NAME = "${BRANCH_NAME == "master" ? "uat" : "${BRANCH_NAME}"}"
+  }
     
 } // End agent
 //Start pipeline
@@ -34,7 +38,7 @@ stages {
     steps {
       container('jnlp'){
         script {
-          scmVars = git branch: 'dev',
+          scmVars = git branch: '${BRANCH_NAME}',
                         credentialsId: 'bookinfo-git-deploy-key',
                         url: 'git@github.com:mercurial963/bookinfo-ratings.git'
                 }// end script
@@ -50,7 +54,7 @@ stages {
         script {
           docker.withRegistry('https://ghcr.io', 'registry-bookinfo'){ //registry-bookinfo is user with token
                         // build and push
-            docker.build('ghcr.io/mercurial963/bookinfo-ratings:dev').push()
+            docker.build('ghcr.io/mercurial963/bookinfo-ratings:${ENV_NAME}').push()
             }// end docker.withRegistry
 
                 }// end script
@@ -64,7 +68,7 @@ stages {
       container('helm'){
         script {
           // withKubeConfig([credentialsId: 'config',serverUrl: '172.17.0.2:6443']){ //add kubeconfig to secret file
-            sh "helm upgrade --install -f helm-values/values-bookinfo-dev-ratings.yaml --wait --set extraEnv.COMMIT_ID=${scmVars.GIT_COMMIT} --namespace dev bookinfo-dev-ratings helm/"
+            sh "helm upgrade --install -f helm-values/values-bookinfo-${ENV_NAME}-ratings.yaml --wait --set extraEnv.COMMIT_ID=${scmVars.GIT_COMMIT} --namespace ${ENV_NAME} bookinfo-${ENV_NAME}-ratings helm/"
             }// withCredentials
 
                 // }// end script
