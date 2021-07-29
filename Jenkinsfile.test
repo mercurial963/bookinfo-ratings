@@ -1,0 +1,53 @@
+// Define paramerter
+def scmVars
+// Uses Declarative syntax to run commands inside a container.
+
+pipeline {
+    agent {
+        // user kubernetes as dynamic slave jenkins
+        kubernetes {
+            yaml """
+apiVersion: v1
+kind: Pod
+spec:
+  containers:
+    - name: docker
+      image: docker:20.10.3-dind
+      command:
+      - dockerd
+      tty: true
+      securityContext:
+        privileged: true
+    - name: helm
+      image: lachlanevenson/k8s-helm:v3.6.0
+      command:
+      - cat
+      tty: true
+"""
+    } // End kubernetes 
+  } // End agent
+  
+  environment {
+    ENV_NAME = "${BRANCH_NAME == "master" ? "uat" : "${BRANCH_NAME}"}"
+  }
+
+//Start pipeline
+  stages {
+      // Clones the repository 
+    stage('Clone source code') {
+      steps {
+        container('jnlp'){
+          script {
+            scmVars = git branch: 'dev' ,
+                          credentialsId: 'bookinfo-git-deploy-key',
+                          url: 'git@github.com:mercurial963/bookinfo-ratings.git'
+                  }// end script
+              }// end container
+          }// end steps
+      }// end stage
+
+
+
+
+
+
