@@ -28,10 +28,10 @@ pipeline {
 
    
 } // End agent
-  environment {
-    ENV_NAME = "${BRANCH_NAME == "master" ? "uat" : "${BRANCH_NAME}"}"
-  }
-  
+environment {
+  ENV_NAME = "${BRANCH_NAME == "master" ? "uat" : "${BRANCH_NAME}"}"
+}
+
 //Start pipeline
 stages {
     // Clones the repository 
