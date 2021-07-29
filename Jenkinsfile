@@ -26,11 +26,12 @@ pipeline {
     """
     } // End kubernetes
 
+   
+} // End agent
   environment {
     ENV_NAME = "${BRANCH_NAME == "master" ? "uat" : "${BRANCH_NAME}"}"
   }
-    
-} // End agent
+  
 //Start pipeline
 stages {
     // Clones the repository 
