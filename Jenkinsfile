@@ -64,7 +64,7 @@ stages {
       container('helm'){
         script {
           // withKubeConfig([credentialsId: 'config',serverUrl: '172.17.0.2:6443']){ //add kubeconfig to secret file
-            sh "helm upgrade --install -f helm-values/values-bookinfo-dev-ratings.yaml --wait --namespace dev bookinfo-dev-ratings helm/"
+            sh "helm upgrade --install -f helm-values/values-bookinfo-dev-ratings.yaml --wait --set extraEnv.COMMIT_ID=${scmVars.GIT_COMMIT} --namespace dev bookinfo-dev-ratings helm/"
             }// withCredentials
 
                 // }// end script
