@@ -3,10 +3,7 @@ def scmVars
 // Uses Declarative syntax to run commands inside a container.
 
 pipeline {
-    agent {
-    triggers {
-        githubPush()
-    }
+
         // user kubernetes as dynamic slave jenkins
         kubernetes {
             yaml """
