@@ -4,6 +4,9 @@ def scmVars
 
 pipeline {
     agent {
+    triggers {
+        githubPush()
+    }
         // user kubernetes as dynamic slave jenkins
         kubernetes {
             yaml """
