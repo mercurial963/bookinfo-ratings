@@ -1,0 +1,14 @@
+name: dev-env
+on:
+  push:
+    branches:
+      - dev
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - run: docker build -t ghcr.io/mercurial963/bookinfo-ratings:dev .
+      - run: echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+      - run: docker push ghcr.io/mercurial963/bookinfo-ratings:dev

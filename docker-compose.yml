@@ -9,7 +9,7 @@ services:
       MONGO_DB_URL: mongodb://mongodb:27017/ratings
       MONGO_DB_USERNAME: ratings
       MONGO_DB_PASSWORD: CHANGEME
-  mongodb:
+  mongodb: # same name with url mongodb://<here>:27017-
     image: bitnami/mongodb:4.4.4-debian-10-r5
     volumes:
       - "./databases:/docker-entrypoint-initdb.d"
@@ -17,4 +17,4 @@ services:
       MONGODB_ROOT_PASSWORD: CHANGEME
       MONGODB_USERNAME: ratings
       MONGODB_PASSWORD: CHANGEME
-      MONGODB_DATABASE: ratings_db
+      MONGODB_DATABASE: ratings
