@@ -73,3 +73,5 @@ kubectl port-forward svc/bookinfo-dev-ratings 8080:8080
 [localhost:8080/ratings/ratings/1](http://localhost:8080/ratings/ratings/1)
 
 
+
+
