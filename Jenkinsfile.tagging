@@ -26,10 +26,6 @@ spec:
 """
     } // End kubernetes 
   } // End agent
-  
-  environment {
-    ENV_NAME = "${BRANCH_NAME == "master" ? "uat" : "${BRANCH_NAME}"}"
-  }
 
 //Start pipeline
   stages {
@@ -54,7 +50,7 @@ spec:
           script {
             docker.withRegistry('https://ghcr.io', 'registry-bookinfo'){ //registry-bookinfo is user with token
                           // build and push
-              uatImage= docker.image('ghcr.io/mercurial963/bookinfo-ratings:uat')
+              uatImage= docker.image("ghcr.io/mercurial963/bookinfo-ratings:uat")
               uatImage.pull()
               uatImage.push("build-${BUILD_NUMBER}")
               }// end docker.withRegistry
