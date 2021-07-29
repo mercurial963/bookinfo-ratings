@@ -71,7 +71,7 @@ spec:
                git tag build-${BUILD_NUMBER}
                #Push tag back to Github
                SSH_AUTH_SOCK=${SSH_AUTH_SOCK} \
-               GIT_SSH_COMMAND="ssh -o UserKnowHostFile=/dev/null -o StrictHostKeyChecking=no" \
+               GIT_SSH_COMMAND="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" \
                git push --tags
               """
               } // End sshagent
