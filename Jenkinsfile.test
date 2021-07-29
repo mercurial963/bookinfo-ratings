@@ -45,7 +45,7 @@ spec:
               }// end container
           }// end steps
       }// end stage
-      
+
     stage('Build and Push') {
 
       steps {
@@ -59,7 +59,20 @@ spec:
                   }// end script
               }// end container
           }// end steps
-      }// end stage      
+      }// end stage
+      
+    stage('Deploy ratings with Helm Chart') {
+      steps {
+        container('helm'){
+          script {
+            // withKubeConfig([credentialsId: 'config',serverUrl: '172.17.0.2:6443']){ //add kubeconfig to secret file
+              sh "helm upgrade --install -f helm-values/values-bookinfo-${ENV_NAME}-ratings.yaml --wait --set extraEnv.COMMIT_ID=${scmVars.GIT_COMMIT} --namespace ${ENV_NAME} bookinfo-${ENV_NAME}-ratings helm/"
+              // }// withCredentials
+
+                  }// end script
+              }// end container
+          }// end steps
+      }// end stage          
   }
 }
 
