@@ -20,13 +20,13 @@ spec:
     } // End kubernetes 
   } // End agent
   
-  paramerters {
-    gitParameter name: 'TAG' ,
-                 selectedValue: 'TOP' ,
-                 sortMode: 'DESCENDING_SMART' ,
-                 tagFilter: 'build-*' ,
-                 type: 'PT_TAG'
-  }
+parameters {
+  gitParameter name: 'TAG' ,
+                selectedValue: 'TOP' ,
+                sortMode: 'DESCENDING_SMART' ,
+                tagFilter: 'build-*' ,
+                type: 'PT_TAG'
+}
 
 //Start pipeline
   stages {
