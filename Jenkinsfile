@@ -4,6 +4,7 @@ def scmVars
 
 pipeline {
     agent {
+
         // user kubernetes as dynamic slave jenkins
         kubernetes {
             yaml """
@@ -77,8 +78,6 @@ spec:
       }// end stage    
   }// end stages
   }
-
-
 
 
 
