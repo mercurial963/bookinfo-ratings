@@ -21,7 +21,7 @@ spec:
   } // End agent
   
   paramerters {
-    gitParameter name: 'TAG'
+    gitParameter name: 'TAG' ,
                  selectedValue: 'TOP' ,
                  sortMode: 'DESCENDING_SMART' ,
                  tagFilter: 'build-*' ,
