@@ -38,7 +38,7 @@ spec:
       steps {
         container('jnlp'){
           script {
-            scmVars = git branch: '${BRANCH_NAME}',
+            scmVars = git branch: '${BRANCH_NAME}' ,
                           credentialsId: 'bookinfo-git-deploy-key',
                           url: 'git@github.com:mercurial963/bookinfo-ratings.git'
                   }// end script
@@ -46,7 +46,6 @@ spec:
           }// end steps
       }// end stage
 
-      // Build image Dockerfile and push 
     stage('Build and Push') {
 
       steps {
@@ -62,7 +61,6 @@ spec:
           }// end steps
       }// end stage
 
-      // Deploy
     stage('Deploy ratings with Helm Chart') {
       steps {
         container('helm'){
@@ -74,9 +72,9 @@ spec:
                   }// end script
               }// end container
           }// end steps
-      }// end stage    
-  }// end stages
+      }// end stage          
   }
+}
 
 
 
