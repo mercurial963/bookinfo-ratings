@@ -35,7 +35,7 @@ spec:
   
   environment {
     ENV_NAME = "${BRANCH_NAME == "master" ? "uat" : "${BRANCH_NAME}"}"
-    SCANNER_HOME = tool 'sonarqube-scanner' :
+    SCANNER_HOME = tool 'sonarqube-scanner'
     PROJECT_KEY = "bookinfo-ratings-key"
     PROJECT_NAME = "bookinfo-ratings"
   }
