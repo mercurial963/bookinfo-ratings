@@ -35,7 +35,7 @@ spec:
   
   environment {
     ENV_NAME = "${BRANCH_NAME == "master" ? "uat" : "${BRANCH_NAME}"}"
-    SCANNER_HOME = tool 'sonarqube-scanner'
+    SCANNER_HOME = tool 'sonarqube-jenkins'
     PROJECT_KEY = "bookinfo-ratings-key"
     PROJECT_NAME = "bookinfo-ratings"
   }
@@ -58,7 +58,7 @@ spec:
       steps {
         container('java-node'){
           script {
-            withSonarQubeEnv('sonarqube-jenkins'){
+            withSonarQubeEnv('bookinfo-ratings'){
 
               sh """${SCANNER_HOME}/bin/sonar-scanner \
               -D sonar.projectKey=${PROJECT_KEY} \
