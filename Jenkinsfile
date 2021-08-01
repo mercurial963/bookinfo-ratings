@@ -89,7 +89,7 @@ spec:
         container('java-node'){
           script {
              // Install application dependecy
-            sh ''' cd src/ && npm install --package-lock && cd../'''
+            sh ''' cd src/ && npm install --package-lock && cd ../'''
 
             // Start OPASP Dependency Check
             dependecyCheck(
