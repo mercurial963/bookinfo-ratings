@@ -93,7 +93,7 @@ spec:
 
             // Start OPASP Dependency Check
             dependecyCheck(
-              additionalArguments: "--data /home/jenkins/dependency-check-data --out dependency-check-report.csv"
+              additionalArguments: "--data /home/jenkins/dependency-check-data --out dependency-check-report.xml" ,
               odcInstallation: "dependency-check"
             )
 
