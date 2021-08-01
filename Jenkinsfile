@@ -30,7 +30,7 @@ spec:
       - cat
       tty: true
   volumes:
-  - name: dependecy-check-data
+  - name: dependency-check-data
     hostPath:
       path: /tmp/dependency-check-data
 
@@ -88,21 +88,21 @@ spec:
       steps {
         container('java-node'){
           script {
-             // Install application dependecy
+             // Install application dependency
             sh ''' cd src/ && npm install --package-lock && cd ../'''
 
             // Start OPASP Dependency Check
-            dependecyCheck(
+            dependenyCheck(
               additionalArguments: "--data /home/jenkins/dependency-check-data --out dependency-check-report.xml" ,
               odcInstallation: "dependency-check"
             )
 
             // Publish report to Jenkins
-            dependecyCheckPublisher(
+            dependencyCheckPublisher(
               pattern: 'dependency-check-report.xml'
             )
 
-             // Remove application dependecy
+             // Remove application dependency
             sh '''rm -rf src/node_modules src/package-lock.json'''
 
 
