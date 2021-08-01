@@ -73,3 +73,38 @@ kubectl port-forward svc/bookinfo-dev-ratings 8080:8080
 [localhost:8080/ratings/ratings/1](http://localhost:8080/ratings/ratings/1)
 
 ### Run SAST
+shiftleft
+sh <(curl https://slscan.sh)
+
+njsscan
+docker run -v $(pwd)/src:/src opensecurity/njsscan:latest /src
+
+Sonarqube
+
+docker run --rm -v "$PWD:/usr/src" \
+    -e SONAR_HOST_URL="http://34.87.71.125:9000" \
+    sonarsource/sonar-scanner-cli \
+    -D sonar.projectKey=bookinfo-ratings-key \
+    -D sonar,projectName=bookinfo-ratings \
+    -D sonar.sources=./src \
+    -D sonar.login=admin \
+    -D sonar.password=sonarqube
+
+rm -rf .scannerwork
+
+
+b846b4bf89f262e340661650a0b8c0cf8d22c3bd
+sonar-scanner \
+  -Dsonar.projectKey=bookinfo-ratings \
+  -Dsonar.sources=./src \
+  -Dsonar.host.url=http://34.87.71.125:9000 \
+  -Dsonar.login=b846b4bf89f262e340661650a0b8c0cf8d22c3bd
+
+  docker run --rm -v "$PWD:/usr/src" \
+    -e SONAR_HOST_URL="http://34.87.71.125:9000" \
+    sonarsource/sonar-scanner-cli \
+    -D sonar.projectKey=bookinfo-ratings\
+    -D sonar,projectName=bookinfo-ratings \
+    -D sonar.sources=./src \
+    -D sonar.login=admin \
+    -D sonar.password=sonarqube

@@ -24,12 +24,20 @@ spec:
       command:
       - cat
       tty: true
+    - name: java-node
+      image: timbru31/java-node:11-alpine-jre-14
+      command:
+      - cat
+      tty: true
 """
     } // End kubernetes 
   } // End agent
   
   environment {
     ENV_NAME = "${BRANCH_NAME == "master" ? "uat" : "${BRANCH_NAME}"}"
+    SCANNER_HOME = tool 'sonarqube-jenkins'
+    PROJECT_KEY = "bookinfo-ratings"
+    PROJECT_NAME = "bookinfo-ratings"
   }
 
 //Start pipeline
@@ -46,6 +54,30 @@ spec:
               }// end container
           }// end steps
       }// end stage
+    stage('Sonarqube Scanner') {
+      steps {
+        container('java-node'){
+          script {
+            withSonarQubeEnv('bookinfo-ratings'){
+
+              sh '''${SCANNER_HOME}/bin/sonar-scanner \
+              -D sonar.projectKey=${PROJECT_KEY} \
+              -D sonar.projectName=${PROJECT_NAME} \
+              -D sonar.projectVersion=${BRANCH_NAME}-${BUILD_NUMBER} \
+              -D sonar.source=./src
+              '''
+            } // end withSonarQubeEnv
+
+            timeout(time:1, unit: 'MINUTE') {//Just in case something goes wrong,
+              def qg = waitForQualityGate() //Reuse TaskID
+              if (qg.status != 'OK'){
+                error = "Pipeline aborted due to quality gate failure: ${qg.status}"
+              }
+            } // end timeout
+                  }// end script
+              }// end container
+          }// end steps
+      }// end stage 
 
       // Build image Dockerfile and push 
     stage('Build and Push') {
@@ -68,14 +100,14 @@ spec:
       steps {
         container('helm'){
           script {
-            // withKubeConfig([credentialsId: 'config',serverUrl: '172.17.0.2:6443']){ //add kubeconfig to secret file
+            // withKubeConfig([credentialsId: 'config']){ //add kubeconfig to secret file
               sh "helm upgrade --install -f helm-values/values-bookinfo-${ENV_NAME}-ratings.yaml --wait --set extraEnv.COMMIT_ID=${scmVars.GIT_COMMIT} --namespace ${ENV_NAME} bookinfo-${ENV_NAME}-ratings helm/"
               // }// withCredentials
 
                   }// end script
               }// end container
           }// end steps
-      }// end stage    
+      }// end stage          
   }// end stages
   }
 

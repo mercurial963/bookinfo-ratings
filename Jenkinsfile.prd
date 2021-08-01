@@ -53,12 +53,12 @@ parameters {
       steps {
         container('helm'){
           script {
-            // withKubeConfig([credentialsId: 'config',serverUrl: '172.17.0.2:6443']){ //add kubeconfig to secret file
+            withKubeConfig([credentialsId: 'config'){ //add kubeconfig to secret file
               sh "helm upgrade --install -f helm-values/values-bookinfo-prd-ratings.yaml --wait \
               --set extraEnv.COMMIT_ID=${scmVars.GIT_COMMIT} \
               --set ratings.tag=${params.TAG} \
               --namespace prd bookinfo-prd-ratings helm/"
-              // }// withCredentials
+              }// withCredentials
 
                   }// end script
               }// end container
