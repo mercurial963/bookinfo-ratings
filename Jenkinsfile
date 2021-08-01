@@ -100,7 +100,7 @@ spec:
       steps {
         container('helm'){
           script {
-            // withKubeConfig([credentialsId: 'config',serverUrl: '172.17.0.2:6443']){ //add kubeconfig to secret file
+            // withKubeConfig([credentialsId: 'config']){ //add kubeconfig to secret file
               sh "helm upgrade --install -f helm-values/values-bookinfo-${ENV_NAME}-ratings.yaml --wait --set extraEnv.COMMIT_ID=${scmVars.GIT_COMMIT} --namespace ${ENV_NAME} bookinfo-${ENV_NAME}-ratings helm/"
               // }// withCredentials
 
