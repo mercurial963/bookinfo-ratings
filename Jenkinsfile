@@ -92,7 +92,7 @@ spec:
             sh ''' cd src/ && npm install --package-lock && cd ../'''
 
             // Start OPASP Dependency Check
-            dependenyCheck(
+            dependencyCheck(
               additionalArguments: "--data /home/jenkins/dependency-check-data --out dependency-check-report.xml" ,
               odcInstallation: "dependency-check"
             )
