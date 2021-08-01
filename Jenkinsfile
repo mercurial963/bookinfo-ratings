@@ -67,12 +67,12 @@ spec:
               -D sonar.source=./src'''
             } // end withSonarQubeEnv
 
-            // timeout(time:1, unit: 'MINUTE') {//Just in case something goes wrong,
-            //   def qg = waitForQualityGate() //Reuse TaskID
-            //   if (qg.status != 'OK'){
-            //     error = "Pipeline aborted due to quality gate failure: ${qg.status}"
-            //   }
-            // } // end timeout
+            timeout(time:1, unit: 'MINUTES') {//Just in case something goes wrong,
+              def qg = waitForQualityGate() //Reuse TaskID
+              if (qg.status != 'OK'){
+                error = "Pipeline aborted due to quality gate failure: ${qg.status}"
+              }
+            } // end timeout
                   }// end script
               }// end container
           }// end steps
