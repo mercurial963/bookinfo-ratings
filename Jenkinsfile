@@ -58,7 +58,7 @@ spec:
       steps {
         container('java-node'){
           script {
-            //withSonarQubeEnv('sonarqube-opsta'){
+            withSonarQubeEnv('sonarqube-opsta'){
 
               sh '''${SCANNER_HOME}/bin/sonar-scanner \
               -D sonar.projectKey=${PROJECT_KEY} \
@@ -66,7 +66,7 @@ spec:
               -D sonar.projectVersion=${BRANCH_NAME}-${BUILD_NUMBER} \
               -D sonar.source=./src
               '''
-            //} // end withSonarQubeEnv
+            } // end withSonarQubeEnv
 
             timeout(time:1, unit: 'MINUTE') {//Just in case something goes wrong,
               def qg = waitForQualityGate() //Reuse TaskID
