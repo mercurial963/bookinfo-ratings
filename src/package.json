@@ -5,9 +5,7 @@
   },
   "dependencies": {
     "httpdispatcher": "1.0.0",
-    // "mongodb": "^2.2.31", // OWASP warning
     "mongodb": "^3.6.4",
-
     "mysql": "^2.15.0"
   }
 }
