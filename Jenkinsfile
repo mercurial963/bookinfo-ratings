@@ -54,30 +54,30 @@ spec:
               }// end container
           }// end steps
       }// end stage
-    stage('Sonarqube Scanner') {
-      steps {
-        container('java-node'){
-          script {
-            //withSonarQubeEnv('sonarqube-opsta'){
+    // stage('Sonarqube Scanner') {
+    //   steps {
+    //     container('java-node'){
+    //       script {
+    //         //withSonarQubeEnv('sonarqube-opsta'){
 
-              sh '''${SCANNER_HOME}/bin/sonar-scanner \
-              -D sonar.projectKey=${PROJECT_KEY} \
-              -D sonar.projectName=${PROJECT_NAME} \
-              -D sonar.projectVersion=${BRANCH_NAME}-${BUILD_NUMBER} \
-              -D sonar.source=./src
-              '''
-            //} // end withSonarQubeEnv
+    //           sh '''${SCANNER_HOME}/bin/sonar-scanner \
+    //           -D sonar.projectKey=${PROJECT_KEY} \
+    //           -D sonar.projectName=${PROJECT_NAME} \
+    //           -D sonar.projectVersion=${BRANCH_NAME}-${BUILD_NUMBER} \
+    //           -D sonar.source=./src
+    //           '''
+    //         //} // end withSonarQubeEnv
 
-            timeout(time:1, unit: 'MINUTE') {//Just in case something goes wrong,
-              def qg = waitForQualityGate() //Reuse TaskID
-              if (qg.status != 'OK'){
-                error = "Pipeline aborted due to quality gate failure: ${qg.status}"
-              }
-            } // end timeout
-                  }// end script
-              }// end container
-          }// end steps
-      }// end stage 
+    //         timeout(time:1, unit: 'MINUTE') {//Just in case something goes wrong,
+    //           def qg = waitForQualityGate() //Reuse TaskID
+    //           if (qg.status != 'OK'){
+    //             error = "Pipeline aborted due to quality gate failure: ${qg.status}"
+    //           }
+    //         } // end timeout
+    //               }// end script
+    //           }// end container
+    //       }// end steps
+    //   }// end stage 
 
       // Build image Dockerfile and push 
     stage('Build and Push') {
