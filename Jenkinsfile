@@ -58,7 +58,7 @@ spec:
       steps {
         container('java-node'){
           script {
-            withSonarQubeEnv('Sonarqube-bookinfo'){
+            withSonarQubeEnv('Sonarqube'){
 
               sh '''${SCANNER_HOME}/bin/sonar-scanner \
               -D sonar.projectKey=${PROJECT_KEY} \
