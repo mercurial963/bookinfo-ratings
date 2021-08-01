@@ -29,6 +29,11 @@ spec:
       command:
       - cat
       tty: true
+  volumes:
+  - name: dependecy-check-data
+    hostPath:
+      path: /tmp/dependency-check-data
+
 """
     } // End kubernetes 
   } // End agent
@@ -78,6 +83,34 @@ spec:
           }// end steps
       }// end stage 
 
+    stage('OWASP Dependency Check') {
+
+      steps {
+        container('java-node'){
+          script {
+             // Install application dependecy
+            sh ''' cd src/ && npm install --package-lock && cd../'''
+
+            // Start OPASP Dependency Check
+            dependecyCheck(
+              additionalArguments: "--data /home/jenkins/dependency-check-data --out dependency-check-report.csv"
+              odcInstallation: "dependency-check"
+            )
+
+            // Publish report to Jenkins
+            dependecyCheckPublisher(
+              pattern: 'dependency-check-report.xml'
+            )
+
+             // Remove application dependecy
+            sh '''rm -rf src/node_modules src/package-lock.json'''
+
+
+                  }// end script
+              }// end container
+          }// end steps
+      }// end stage
+
       // Build image Dockerfile and push 
     stage('Build and Push') {
 
@@ -93,6 +126,7 @@ spec:
               }// end container
           }// end steps
       }// end stage
+
 
       // Deploy
     stage('Deploy ratings with Helm Chart') {
