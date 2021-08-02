@@ -5,7 +5,7 @@ def scmVars
 pipeline {
     agent {
 
-        user kubernetes as dynamic slave jenkins
+        // user kubernetes as dynamic slave jenkins
         kubernetes {
             yaml """
 apiVersion: v1
