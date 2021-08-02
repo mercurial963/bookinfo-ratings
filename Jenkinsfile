@@ -19,23 +19,24 @@ spec:
       tty: true
       securityContext:
         privileged: true
+    - name: helm
+      image: lachlanevenson/k8s-helm:v3.6.0
+      command:
+      - cat
+      tty: true
+    - name: java-node
+      image: timbru31/java-node:11-alpine-jre-14
+      command:
+      - cat
+      tty: true
+  volumes:
+  - name: dependency-check-data
+    hostPath:
+      path: /tmp/dependency-check-data
 
 
 """
-  //   - name: helm
-  //     image: lachlanevenson/k8s-helm:v3.6.0
-  //     command:
-  //     - cat
-  //     tty: true
-  //   - name: java-node
-  //     image: timbru31/java-node:11-alpine-jre-14
-  //     command:
-  //     - cat
-  //     tty: true
-  // volumes:
-  // - name: dependency-check-data
-  //   hostPath:
-  //     path: /tmp/dependency-check-data
+
     } // End kubernetes 
   } // End agent
   
@@ -60,105 +61,105 @@ spec:
               }// end container
           }// end steps
       }// end stage
-    // stage('Sonarqube Scanner') {
-    //   steps {
-    //     container('java-node'){
-    //       script {
-    //         withSonarQubeEnv('Sonarqube-bookinfo'){
+    stage('Sonarqube Scanner') {
+      steps {
+        container('java-node'){
+          script {
+            withSonarQubeEnv('Sonarqube-bookinfo'){
 
-    //           sh '''${SCANNER_HOME}/bin/sonar-scanner \
-    //           -D sonar.projectKey=${PROJECT_KEY} \
-    //           -D sonar.projectName=${PROJECT_NAME} \
-    //           -D sonar.projectVersion=${BRANCH_NAME}-${BUILD_NUMBER} \
-    //           -D sonar.source=./src'''
-    //         } // end withSonarQubeEnv
+              sh '''${SCANNER_HOME}/bin/sonar-scanner \
+              -D sonar.projectKey=${PROJECT_KEY} \
+              -D sonar.projectName=${PROJECT_NAME} \
+              -D sonar.projectVersion=${BRANCH_NAME}-${BUILD_NUMBER} \
+              -D sonar.source=./src'''
+            } // end withSonarQubeEnv
 
-    //         timeout(time: 1, unit: 'MINUTES') {//Just in case something goes wrong,
-    //           def qg = waitForQualityGate() //Reuse TaskID
-    //           if (qg.status != 'OK'){
-    //             error = "Pipeline aborted due to quality gate failure: ${qg.status}"
-    //           }
-    //         } // end timeout
-    //               }// end script
-    //           }// end container
-    //       }// end steps
-    //   }// end stage 
+            timeout(time: 1, unit: 'MINUTES') {//Just in case something goes wrong,
+              def qg = waitForQualityGate() //Reuse TaskID
+              if (qg.status != 'OK'){
+                error = "Pipeline aborted due to quality gate failure: ${qg.status}"
+              }
+            } // end timeout
+                  }// end script
+              }// end container
+          }// end steps
+      }// end stage 
 
-    // stage('OWASP Dependency Check') {
+    stage('OWASP Dependency Check') {
 
-    //   steps {
-    //     container('java-node'){
-    //       script {
-    //          // Install application dependency
-    //         sh ''' cd src/ && npm install --package-lock && cd ../'''
+      steps {
+        container('java-node'){
+          script {
+             // Install application dependency
+            sh ''' cd src/ && npm install --package-lock && cd ../'''
 
-    //         // Start OPASP Dependency Check
-    //         dependencyCheck(
-    //           additionalArguments: "--data /home/jenkins/dependency-check-data --out dependency-check-report.xml" ,
-    //           odcInstallation: "dependency-check"
-    //         )
+            // Start OPASP Dependency Check
+            dependencyCheck(
+              additionalArguments: "--data /home/jenkins/dependency-check-data --out dependency-check-report.xml" ,
+              odcInstallation: "dependency-check"
+            )
 
-    //         // Publish report to Jenkins
-    //         dependencyCheckPublisher(
-    //           pattern: 'dependency-check-report.xml'
-    //         )
+            // Publish report to Jenkins
+            dependencyCheckPublisher(
+              pattern: 'dependency-check-report.xml'
+            )
 
-    //          // Remove application dependency
-    //         sh '''rm -rf src/node_modules src/package-lock.json'''
+             // Remove application dependency
+            sh '''rm -rf src/node_modules src/package-lock.json'''
 
 
-    //               }// end script
-    //           }// end container
-    //       }// end steps
-    //   }// end stage
+                  }// end script
+              }// end container
+          }// end steps
+      }// end stage
 
-    // //   // Build image Dockerfile and push 
-    // stage('Build and Push') {
+    //   // Build image Dockerfile and push 
+    stage('Build and Push') {
 
-    //   steps {
-    //     container('docker'){
-    //       script {
-    //         docker.withRegistry('https://ghcr.io', 'registry-bookinfo'){ //registry-bookinfo is user with token
-    //                       // build and push
-    //           docker.build('ghcr.io/mercurial963/bookinfo-ratings:${ENV_NAME}').push()
-    //           }// end docker.withRegistry
+      steps {
+        container('docker'){
+          script {
+            docker.withRegistry('https://ghcr.io', 'registry-bookinfo'){ //registry-bookinfo is user with token
+                          // build and push
+              docker.build('ghcr.io/mercurial963/bookinfo-ratings:${ENV_NAME}').push()
+              }// end docker.withRegistry
 
-    //               }// end script
-    //           }// end container
-    //       }// end steps
-    //   }// end stage
+                  }// end script
+              }// end container
+          }// end steps
+      }// end stage
 
-    // stage('Anchore Engine') {
+    stage('Anchore Engine') {
 
-    //   steps {
-    //     container('jnlp'){
-    //       script {
-    //                // Send Docker image to Anchor Analyzer
-    //         // def image = 'ghcr.io/mercurial963/bookinfo-ratings:${ENV_NAME}'
+      steps {
+        container('jnlp'){
+          script {
+                   // Send Docker image to Anchor Analyzer
+            // def image = 'ghcr.io/mercurial963/bookinfo-ratings:${ENV_NAME}'
                          
-    //         writeFile file: 'anchore_images', text: "ghcr.io/mercurial963/bookinfo-ratings:${ENV_NAME}"
-    //         anchore name: 'anchore_images', bailOnFail: false
-    //         // anchore_name: 'anchore_images', bailOnFail: false
+            writeFile file: 'anchore_images', text: "ghcr.io/mercurial963/bookinfo-ratings:${ENV_NAME}"
+            anchore name: 'anchore_images', bailOnFail: false
+            // anchore_name: 'anchore_images', bailOnFail: false
 
-    //               }// end script
-    //           }// end container
-    //       }// end steps
-    //   }// end stage
+                  }// end script
+              }// end container
+          }// end steps
+      }// end stage
 
 
-    //   // Deploy
-    // stage('Deploy ratings with Helm Chart') {
-    //   steps {
-    //     container('helm'){
-    //       script {
-    //         // withKubeConfig([credentialsId: 'config']){ //add kubeconfig to secret file
-    //           sh "helm upgrade --install -f helm-values/values-bookinfo-${ENV_NAME}-ratings.yaml --wait --set extraEnv.COMMIT_ID=${scmVars.GIT_COMMIT} --namespace ${ENV_NAME} bookinfo-${ENV_NAME}-ratings helm/"
-    //           // }// withCredentials
+      // Deploy
+    stage('Deploy ratings with Helm Chart') {
+      steps {
+        container('helm'){
+          script {
+            // withKubeConfig([credentialsId: 'config']){ //add kubeconfig to secret file
+              sh "helm upgrade --install -f helm-values/values-bookinfo-${ENV_NAME}-ratings.yaml --wait --set extraEnv.COMMIT_ID=${scmVars.GIT_COMMIT} --namespace ${ENV_NAME} bookinfo-${ENV_NAME}-ratings helm/"
+              // }// withCredentials
 
-    //               }// end script
-    //           }// end container
-    //       }// end steps
-    //   }// end stage          
+                  }// end script
+              }// end container
+          }// end steps
+      }// end stage          
   }// end stages
   }
 
