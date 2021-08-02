@@ -135,7 +135,8 @@ spec:
                    // Send Docker image to Anchor Analyzer
             def image = 'ghcr.io/mercurial963/bookinfo-ratings:${ENV_NAME}'
             writeFile file: 'anchore_images', text: image
-            anchore_name: 'anchore_images', bailOnFail: false
+            anchore name: 'my_image_file', bailOnFail: false
+            // anchore_name: 'anchore_images', bailOnFail: false
 
                   }// end script
               }// end container
