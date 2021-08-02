@@ -127,6 +127,20 @@ spec:
           }// end steps
       }// end stage
 
+    stage('Anchore Engine') {
+
+      steps {
+        container('jnlp'){
+          script {
+                   // Send Docker image to Anchor Analyzer
+            writeFile file: 'anchore_images', text: "ghcr.io/mercurial963/bookinfo-ratings:${ENV_NAME}"
+            anchore_name: 'anchore_images', bailOnFail: false
+
+                  }// end script
+              }// end container
+          }// end steps
+      }// end stage
+
 
       // Deploy
     stage('Deploy ratings with Helm Chart') {
