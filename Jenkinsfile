@@ -133,8 +133,9 @@ spec:
         container('jnlp'){
           script {
                    // Send Docker image to Anchor Analyzer
-            def image = 'ghcr.io/mercurial963/bookinfo-ratings:${ENV_NAME}'
-            writeFile file: 'anchore_images', text: image
+            // def image = 'ghcr.io/mercurial963/bookinfo-ratings:${ENV_NAME}'
+                         
+            writeFile file: 'anchore_images', text: "ghcr.io/mercurial963/bookinfo-ratings:${ENV_NAME}"
             anchore name: 'anchore_images', bailOnFail: false
             // anchore_name: 'anchore_images', bailOnFail: false
 
