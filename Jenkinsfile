@@ -83,66 +83,66 @@ spec:
           }// end steps
       }// end stage 
 
-    stage('OWASP Dependency Check') {
+    // stage('OWASP Dependency Check') {
 
-      steps {
-        container('java-node'){
-          script {
-             // Install application dependency
-            sh ''' cd src/ && npm install --package-lock && cd ../'''
+    //   steps {
+    //     container('java-node'){
+    //       script {
+    //          // Install application dependency
+    //         sh ''' cd src/ && npm install --package-lock && cd ../'''
 
-            // Start OPASP Dependency Check
-            dependencyCheck(
-              additionalArguments: "--data /home/jenkins/dependency-check-data --out dependency-check-report.xml" ,
-              odcInstallation: "dependency-check"
-            )
+    //         // Start OPASP Dependency Check
+    //         dependencyCheck(
+    //           additionalArguments: "--data /home/jenkins/dependency-check-data --out dependency-check-report.xml" ,
+    //           odcInstallation: "dependency-check"
+    //         )
 
-            // Publish report to Jenkins
-            dependencyCheckPublisher(
-              pattern: 'dependency-check-report.xml'
-            )
+    //         // Publish report to Jenkins
+    //         dependencyCheckPublisher(
+    //           pattern: 'dependency-check-report.xml'
+    //         )
 
-             // Remove application dependency
-            sh '''rm -rf src/node_modules src/package-lock.json'''
+    //          // Remove application dependency
+    //         sh '''rm -rf src/node_modules src/package-lock.json'''
 
 
-                  }// end script
-              }// end container
-          }// end steps
-      }// end stage
+    //               }// end script
+    //           }// end container
+    //       }// end steps
+    //   }// end stage
 
-      // Build image Dockerfile and push 
-    stage('Build and Push') {
+    //   // Build image Dockerfile and push 
+    // stage('Build and Push') {
 
-      steps {
-        container('docker'){
-          script {
-            docker.withRegistry('https://ghcr.io', 'registry-bookinfo'){ //registry-bookinfo is user with token
-                          // build and push
-              docker.build('ghcr.io/mercurial963/bookinfo-ratings:${ENV_NAME}').push()
-              }// end docker.withRegistry
+    //   steps {
+    //     container('docker'){
+    //       script {
+    //         docker.withRegistry('https://ghcr.io', 'registry-bookinfo'){ //registry-bookinfo is user with token
+    //                       // build and push
+    //           docker.build('ghcr.io/mercurial963/bookinfo-ratings:${ENV_NAME}').push()
+    //           }// end docker.withRegistry
 
-                  }// end script
-              }// end container
-          }// end steps
-      }// end stage
+    //               }// end script
+    //           }// end container
+    //       }// end steps
+    //   }// end stage
 
-    stage('Anchore Engine') {
+    // stage('Anchore Engine') {
 
-      steps {
-        container('jnlp'){
-          script {
-                   // Send Docker image to Anchor Analyzer
-            // def image = 'ghcr.io/mercurial963/bookinfo-ratings:${ENV_NAME}'
+    //   steps {
+    //     container('jnlp'){
+    //       script {
+    //                // Send Docker image to Anchor Analyzer
+    //         // def image = 'ghcr.io/mercurial963/bookinfo-ratings:${ENV_NAME}'
                          
-            writeFile file: 'anchore_images', text: "ghcr.io/mercurial963/bookinfo-ratings:${ENV_NAME}"
-            anchore name: 'anchore_images', bailOnFail: false
-            // anchore_name: 'anchore_images', bailOnFail: false
+    //         writeFile file: 'anchore_images', text: "ghcr.io/mercurial963/bookinfo-ratings:${ENV_NAME}"
+    //         anchore name: 'anchore_images', bailOnFail: false
+    //         // anchore_name: 'anchore_images', bailOnFail: false
 
-                  }// end script
-              }// end container
-          }// end steps
-      }// end stage
+    //               }// end script
+    //           }// end container
+    //       }// end steps
+    //   }// end stage
 
 
       // Deploy
@@ -160,6 +160,8 @@ spec:
       }// end stage          
   }// end stages
   }
+
+
 
 
 
