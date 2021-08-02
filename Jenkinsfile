@@ -5,37 +5,38 @@ def scmVars
 pipeline {
     agent {
 
-        // user kubernetes as dynamic slave jenkins
-//         kubernetes {
-//             yaml """
-// apiVersion: v1
-// kind: Pod
-// spec:
-//   containers:
-//     - name: docker
-//       image: docker:20.10.3-dind
-//       command:
-//       - dockerd
-//       tty: true
-//       securityContext:
-//         privileged: true
-//     - name: helm
-//       image: lachlanevenson/k8s-helm:v3.6.0
-//       command:
-//       - cat
-//       tty: true
-//     - name: java-node
-//       image: timbru31/java-node:11-alpine-jre-14
-//       command:
-//       - cat
-//       tty: true
-//   volumes:
-//   - name: dependency-check-data
-//     hostPath:
-//       path: /tmp/dependency-check-data
+        user kubernetes as dynamic slave jenkins
+        kubernetes {
+            yaml """
+apiVersion: v1
+kind: Pod
+spec:
+  containers:
+    - name: docker
+      image: docker:20.10.3-dind
+      command:
+      - dockerd
+      tty: true
+      securityContext:
+        privileged: true
 
-// """
-//     } // End kubernetes 
+
+"""
+  //   - name: helm
+  //     image: lachlanevenson/k8s-helm:v3.6.0
+  //     command:
+  //     - cat
+  //     tty: true
+  //   - name: java-node
+  //     image: timbru31/java-node:11-alpine-jre-14
+  //     command:
+  //     - cat
+  //     tty: true
+  // volumes:
+  // - name: dependency-check-data
+  //   hostPath:
+  //     path: /tmp/dependency-check-data
+    } // End kubernetes 
   } // End agent
   
   environment {
