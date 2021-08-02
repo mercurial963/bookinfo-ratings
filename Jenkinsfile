@@ -114,18 +114,18 @@ spec:
     //   // Build image Dockerfile and push 
     // stage('Build and Push') {
 
-    //   steps {
-    //     container('docker'){
-    //       script {
-    //         docker.withRegistry('https://ghcr.io', 'registry-bookinfo'){ //registry-bookinfo is user with token
-    //                       // build and push
-    //           docker.build('ghcr.io/mercurial963/bookinfo-ratings:${ENV_NAME}').push()
-    //           }// end docker.withRegistry
+      steps {
+        container('docker'){
+          script {
+            docker.withRegistry('https://ghcr.io', 'registry-bookinfo'){ //registry-bookinfo is user with token
+                          // build and push
+              docker.build('ghcr.io/mercurial963/bookinfo-ratings:${ENV_NAME}').push()
+              }// end docker.withRegistry
 
-    //               }// end script
-    //           }// end container
-    //       }// end steps
-    //   }// end stage
+                  }// end script
+              }// end container
+          }// end steps
+      }// end stage
 
     // stage('Anchore Engine') {
 
