@@ -6,36 +6,36 @@ pipeline {
     agent {
 
         // user kubernetes as dynamic slave jenkins
-        kubernetes {
-            yaml """
-apiVersion: v1
-kind: Pod
-spec:
-  containers:
-    - name: docker
-      image: docker:20.10.3-dind
-      command:
-      - dockerd
-      tty: true
-      securityContext:
-        privileged: true
-    - name: helm
-      image: lachlanevenson/k8s-helm:v3.6.0
-      command:
-      - cat
-      tty: true
-    - name: java-node
-      image: timbru31/java-node:11-alpine-jre-14
-      command:
-      - cat
-      tty: true
-  volumes:
-  - name: dependency-check-data
-    hostPath:
-      path: /tmp/dependency-check-data
+//         kubernetes {
+//             yaml """
+// apiVersion: v1
+// kind: Pod
+// spec:
+//   containers:
+//     - name: docker
+//       image: docker:20.10.3-dind
+//       command:
+//       - dockerd
+//       tty: true
+//       securityContext:
+//         privileged: true
+//     - name: helm
+//       image: lachlanevenson/k8s-helm:v3.6.0
+//       command:
+//       - cat
+//       tty: true
+//     - name: java-node
+//       image: timbru31/java-node:11-alpine-jre-14
+//       command:
+//       - cat
+//       tty: true
+//   volumes:
+//   - name: dependency-check-data
+//     hostPath:
+//       path: /tmp/dependency-check-data
 
-"""
-    } // End kubernetes 
+// """
+//     } // End kubernetes 
   } // End agent
   
   environment {
@@ -59,29 +59,29 @@ spec:
               }// end container
           }// end steps
       }// end stage
-    stage('Sonarqube Scanner') {
-      steps {
-        container('java-node'){
-          script {
-            withSonarQubeEnv('Sonarqube-bookinfo'){
+    // stage('Sonarqube Scanner') {
+    //   steps {
+    //     container('java-node'){
+    //       script {
+    //         withSonarQubeEnv('Sonarqube-bookinfo'){
 
-              sh '''${SCANNER_HOME}/bin/sonar-scanner \
-              -D sonar.projectKey=${PROJECT_KEY} \
-              -D sonar.projectName=${PROJECT_NAME} \
-              -D sonar.projectVersion=${BRANCH_NAME}-${BUILD_NUMBER} \
-              -D sonar.source=./src'''
-            } // end withSonarQubeEnv
+    //           sh '''${SCANNER_HOME}/bin/sonar-scanner \
+    //           -D sonar.projectKey=${PROJECT_KEY} \
+    //           -D sonar.projectName=${PROJECT_NAME} \
+    //           -D sonar.projectVersion=${BRANCH_NAME}-${BUILD_NUMBER} \
+    //           -D sonar.source=./src'''
+    //         } // end withSonarQubeEnv
 
-            timeout(time: 1, unit: 'MINUTES') {//Just in case something goes wrong,
-              def qg = waitForQualityGate() //Reuse TaskID
-              if (qg.status != 'OK'){
-                error = "Pipeline aborted due to quality gate failure: ${qg.status}"
-              }
-            } // end timeout
-                  }// end script
-              }// end container
-          }// end steps
-      }// end stage 
+    //         timeout(time: 1, unit: 'MINUTES') {//Just in case something goes wrong,
+    //           def qg = waitForQualityGate() //Reuse TaskID
+    //           if (qg.status != 'OK'){
+    //             error = "Pipeline aborted due to quality gate failure: ${qg.status}"
+    //           }
+    //         } // end timeout
+    //               }// end script
+    //           }// end container
+    //       }// end steps
+    //   }// end stage 
 
     // stage('OWASP Dependency Check') {
 
@@ -111,21 +111,21 @@ spec:
     //       }// end steps
     //   }// end stage
 
-    //   // Build image Dockerfile and push 
-    stage('Build and Push') {
+    // //   // Build image Dockerfile and push 
+    // stage('Build and Push') {
 
-      steps {
-        container('docker'){
-          script {
-            docker.withRegistry('https://ghcr.io', 'registry-bookinfo'){ //registry-bookinfo is user with token
-                          // build and push
-              docker.build('ghcr.io/mercurial963/bookinfo-ratings:${ENV_NAME}').push()
-              }// end docker.withRegistry
+    //   steps {
+    //     container('docker'){
+    //       script {
+    //         docker.withRegistry('https://ghcr.io', 'registry-bookinfo'){ //registry-bookinfo is user with token
+    //                       // build and push
+    //           docker.build('ghcr.io/mercurial963/bookinfo-ratings:${ENV_NAME}').push()
+    //           }// end docker.withRegistry
 
-                  }// end script
-              }// end container
-          }// end steps
-      }// end stage
+    //               }// end script
+    //           }// end container
+    //       }// end steps
+    //   }// end stage
 
     // stage('Anchore Engine') {
 
@@ -145,19 +145,19 @@ spec:
     //   }// end stage
 
 
-      // Deploy
-    stage('Deploy ratings with Helm Chart') {
-      steps {
-        container('helm'){
-          script {
-            // withKubeConfig([credentialsId: 'config']){ //add kubeconfig to secret file
-              sh "helm upgrade --install -f helm-values/values-bookinfo-${ENV_NAME}-ratings.yaml --wait --set extraEnv.COMMIT_ID=${scmVars.GIT_COMMIT} --namespace ${ENV_NAME} bookinfo-${ENV_NAME}-ratings helm/"
-              // }// withCredentials
+    //   // Deploy
+    // stage('Deploy ratings with Helm Chart') {
+    //   steps {
+    //     container('helm'){
+    //       script {
+    //         // withKubeConfig([credentialsId: 'config']){ //add kubeconfig to secret file
+    //           sh "helm upgrade --install -f helm-values/values-bookinfo-${ENV_NAME}-ratings.yaml --wait --set extraEnv.COMMIT_ID=${scmVars.GIT_COMMIT} --namespace ${ENV_NAME} bookinfo-${ENV_NAME}-ratings helm/"
+    //           // }// withCredentials
 
-                  }// end script
-              }// end container
-          }// end steps
-      }// end stage          
+    //               }// end script
+    //           }// end container
+    //       }// end steps
+    //   }// end stage          
   }// end stages
   }
 
