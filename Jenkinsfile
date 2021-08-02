@@ -112,7 +112,7 @@ spec:
     //   }// end stage
 
     //   // Build image Dockerfile and push 
-    // stage('Build and Push') {
+    stage('Build and Push') {
 
       steps {
         container('docker'){
