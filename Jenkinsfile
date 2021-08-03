@@ -91,7 +91,31 @@ spec:
                   }// end script
               }// end container
           }// end steps
-      }// end stage 
+      }// end stage
+
+      // ********** Stage sKan ********** 
+    stage('sKan') {
+      steps {
+        container('helm'){
+          script {
+            // Generate K8s-manifest-deploy.yaml for scanning
+            sh "helm template -f helm-values/values-bookinfo-${ENV_NAME}-ratings.yaml \
+            --set extraEnv.COMMIT_ID=${scmVars.GIT_COMMIT} \
+            --namespace ${ENV_NAME} bookinfo-${ENV_NAME}-ratings helm/ \
+            > k8s-manifest-deploy.yaml"  
+                  }// end script
+              }// end container
+         container('sKan'){
+          script {
+            // Scanning with sKan
+            sh "/skan manifest -f k8s-manifest-deploy.yaml"
+            // Kepp report as artifacts
+            archiveArtifacts artifacts: 'skan-result.html'  
+            sh "rm k8s-manifest-deploy.yaml"
+                  }// end script
+              }// end container             
+          }// end steps
+      }// end stage  
 
     stage('OWASP Dependency Check') {
 
@@ -161,7 +185,9 @@ spec:
         container('helm'){
           script {
             // withKubeConfig([credentialsId: 'config']){ //add kubeconfig to secret file
-              sh "helm upgrade --install -f helm-values/values-bookinfo-${ENV_NAME}-ratings.yaml --wait --set extraEnv.COMMIT_ID=${scmVars.GIT_COMMIT} --namespace ${ENV_NAME} bookinfo-${ENV_NAME}-ratings helm/"
+              sh "helm upgrade --install -f helm-values/values-bookinfo-${ENV_NAME}-ratings.yaml --wait \
+              --set extraEnv.COMMIT_ID=${scmVars.GIT_COMMIT} \
+              --namespace ${ENV_NAME} bookinfo-${ENV_NAME}-ratings helm/"
               // }// withCredentials
 
                   }// end script
