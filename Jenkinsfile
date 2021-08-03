@@ -24,17 +24,27 @@ spec:
       command:
       - cat
       tty: true
+    - name: skan
+      image: alcide/skan:v0.9.0-debug
+      command:
+      - cat
+      tty: true   
     - name: java-node
       image: timbru31/java-node:11-alpine-jre-14
       command:
       - cat
       tty: true
+      volumeMounts:
+      - mountPath: /home/jenkins/dependency-check-data
+        name: dependency-check-data
   volumes:
   - name: dependency-check-data
     hostPath:
       path: /tmp/dependency-check-data
 
+
 """
+
     } // End kubernetes 
   } // End agent
   
@@ -81,7 +91,31 @@ spec:
                   }// end script
               }// end container
           }// end steps
-      }// end stage 
+      }// end stage
+
+      // ********** Stage sKan ********** 
+    stage('sKan') {
+      steps {
+        container('helm'){
+          script {
+            // Generate K8s-manifest-deploy.yaml for scanning
+            sh "helm template -f helm-values/values-bookinfo-${ENV_NAME}-ratings.yaml \
+            --set extraEnv.COMMIT_ID=${scmVars.GIT_COMMIT} \
+            --namespace ${ENV_NAME} bookinfo-${ENV_NAME}-ratings helm/ \
+            > k8s-manifest-deploy.yaml"  
+                  }// end script
+              }// end container
+         container('skan'){
+          script {
+            // Scanning with sKan
+            sh "/skan manifest -f k8s-manifest-deploy.yaml"
+            // Kepp report as artifacts
+            archiveArtifacts artifacts: 'skan-result.html'  
+            sh "rm k8s-manifest-deploy.yaml"
+                  }// end script
+              }// end container             
+          }// end steps
+      }// end stage  
 
     stage('OWASP Dependency Check') {
 
@@ -111,7 +145,7 @@ spec:
           }// end steps
       }// end stage
 
-      // Build image Dockerfile and push 
+    //   // Build image Dockerfile and push 
     stage('Build and Push') {
 
       steps {
@@ -127,6 +161,23 @@ spec:
           }// end steps
       }// end stage
 
+    stage('Anchore Engine') {
+
+      steps {
+        container('jnlp'){
+          script {
+                   // Send Docker image to Anchor Analyzer
+            // def image = 'ghcr.io/mercurial963/bookinfo-ratings:${ENV_NAME}'
+                         
+            writeFile file: 'anchore_images', text: "ghcr.io/mercurial963/bookinfo-ratings:${ENV_NAME}"
+            anchore name: 'anchore_images', bailOnFail: false
+            // anchore_name: 'anchore_images', bailOnFail: false
+
+                  }// end script
+              }// end container
+          }// end steps
+      }// end stage
+
 
       // Deploy
     stage('Deploy ratings with Helm Chart') {
@@ -134,7 +185,9 @@ spec:
         container('helm'){
           script {
             // withKubeConfig([credentialsId: 'config']){ //add kubeconfig to secret file
-              sh "helm upgrade --install -f helm-values/values-bookinfo-${ENV_NAME}-ratings.yaml --wait --set extraEnv.COMMIT_ID=${scmVars.GIT_COMMIT} --namespace ${ENV_NAME} bookinfo-${ENV_NAME}-ratings helm/"
+              sh "helm upgrade --install -f helm-values/values-bookinfo-${ENV_NAME}-ratings.yaml --wait \
+              --set extraEnv.COMMIT_ID=${scmVars.GIT_COMMIT} \
+              --namespace ${ENV_NAME} bookinfo-${ENV_NAME}-ratings helm/"
               // }// withCredentials
 
                   }// end script
@@ -143,6 +196,8 @@ spec:
       }// end stage          
   }// end stages
   }
+
+
 
 
 
