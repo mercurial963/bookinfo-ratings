@@ -105,7 +105,7 @@ spec:
             > k8s-manifest-deploy.yaml"  
                   }// end script
               }// end container
-         container('sKan'){
+         container('skan'){
           script {
             // Scanning with sKan
             sh "/skan manifest -f k8s-manifest-deploy.yaml"
