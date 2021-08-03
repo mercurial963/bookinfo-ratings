@@ -93,7 +93,7 @@ docker run --rm -v "$PWD:/usr/src" \
 rm -rf .scannerwork
 
 
-b846b4bf89f262e340661650a0b8c0cf8d22c3bd
+5646870b86ffb7da9a3c93ea9238f7164f2b6db5
 sonar-scanner \
   -Dsonar.projectKey=bookinfo-ratings \
   -Dsonar.sources=./src \
@@ -108,3 +108,11 @@ sonar-scanner \
     -D sonar.sources=./src \
     -D sonar.login=admin \
     -D sonar.password=sonarqube
+
+
+    Kubesec
+
+helm template -f helm-values/values-bookinfo-dev-ratings.yaml bookinfo-dev-ratings helm/ | \
+docker run -i --rm kubesec/kubesec:2.11.0 scan /dev/stdin
+
+Skan

@@ -24,11 +24,19 @@ spec:
       command:
       - cat
       tty: true
+    - name: skan
+      image: alcide/skan:v0.9.0-debug
+      command:
+      - cat
+      tty: true   
     - name: java-node
       image: timbru31/java-node:11-alpine-jre-14
       command:
       - cat
       tty: true
+      volumeMounts:
+      - mountPath: /home/jenkins/dependency-check-data
+        name: dependency-check-data
   volumes:
   - name: dependency-check-data
     hostPath:
