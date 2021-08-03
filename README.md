@@ -72,34 +72,31 @@ kubectl port-forward svc/bookinfo-dev-ratings 8080:8080
 [localhost:8080/health](http://127.0.0.1:8080/health)  
 [localhost:8080/ratings/ratings/1](http://localhost:8080/ratings/ratings/1)
 
-### Run SAST
-shiftleft
+## Add Security 
+### Code review
+```console
+# shiftleft
 sh <(curl https://slscan.sh)
 
-njsscan
+# njsscan
 docker run -v $(pwd)/src:/src opensecurity/njsscan:latest /src
 
-Sonarqube
-
+# Sonarqube
 docker run --rm -v "$PWD:/usr/src" \
     -e SONAR_HOST_URL="http://34.87.71.125:9000" \
     sonarsource/sonar-scanner-cli \
-    -D sonar.projectKey=bookinfo-ratings-key \
+    -D sonar.projectKey=bookinfo-ratings \
     -D sonar,projectName=bookinfo-ratings \
     -D sonar.sources=./src \
     -D sonar.login=admin \
     -D sonar.password=sonarqube
 
 rm -rf .scannerwork
+```
 
-
-5646870b86ffb7da9a3c93ea9238f7164f2b6db5
-sonar-scanner \
-  -Dsonar.projectKey=bookinfo-ratings \
-  -Dsonar.sources=./src \
-  -Dsonar.host.url=http://34.87.71.125:9000 \
-  -Dsonar.login=b846b4bf89f262e340661650a0b8c0cf8d22c3bd
-
+### SCA (Software Composition Analysis)
+```console
+# OWASP Dependency Check
   docker run --rm -v "$PWD:/usr/src" \
     -e SONAR_HOST_URL="http://34.87.71.125:9000" \
     sonarsource/sonar-scanner-cli \
@@ -108,11 +105,34 @@ sonar-scanner \
     -D sonar.sources=./src \
     -D sonar.login=admin \
     -D sonar.password=sonarqube
+```
 
+### Docker image security 
+```console
+# Syft
+syft ghcr.io/mercurial963/bookinfo-dev-ratings:dev
 
-    Kubesec
+# Grype
+grype db update
+grype ghcr.io/mercurial963/bookinfo-dev-ratings:dev
+
+# Anchore-engine
+
+Install on kubernetes with helm chart
+add registry in Anchore-engine with anchore-cli
+```
+
+### Infrastructure as a code security
+```console
+# Kubesec
 
 helm template -f helm-values/values-bookinfo-dev-ratings.yaml bookinfo-dev-ratings helm/ | \
 docker run -i --rm kubesec/kubesec:2.11.0 scan /dev/stdin
+```
 
-Skan
+# sKan
+
+helm template -f helm-values/values-bookinfo-dev-ratings.yaml bookinfo-dev-ratings helm/ | \
+docker run -i --rm -v $(pwd)/result:/result alcide/skan:v0.9.0 \
+pipe> manifest --outputfile /result/skan-result.html -f -
+```
