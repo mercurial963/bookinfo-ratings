@@ -128,7 +128,6 @@ add registry in Anchore-engine with anchore-cli
 
 helm template -f helm-values/values-bookinfo-dev-ratings.yaml bookinfo-dev-ratings helm/ | \
 docker run -i --rm kubesec/kubesec:2.11.0 scan /dev/stdin
-```
 
 # sKan
 
