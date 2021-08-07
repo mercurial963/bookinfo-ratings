@@ -21,3 +21,4 @@ extraEnv:
   # MONGO_DB_URL: mongodb://bookinfo-prd-ratings-mongodb:27017/ratings-prd
   MONGO_DB_USERNAME: ratings-prd
   COMMIT_ID: CHANGEME
+  
