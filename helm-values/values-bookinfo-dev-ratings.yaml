@@ -16,8 +16,8 @@ ingress:
   serviceType: ClusterIP
 extraEnv:
   SERVICE_VERSION: v2
-  MONGO_DB_URL: mongodb://bookinfo-dev-ratings-mongodb:27017/?authSource=ratings
-  MONGO_DB_NAME: ratings-dev
-  # MONGO_DB_URL: mongodb://bookinfo-dev-ratings-mongodb:27017/ratings-dev //Change major ratings
+  # MONGO_DB_URL: mongodb://bookinfo-dev-ratings-mongodb:27017/?authSource=ratings
+  MONGO_DB_URL: mongodb://bookinfo-dev-ratings-mongodb:27017/ratings-dev 
+  # MONGO_DB_NAME: ratings-dev
   MONGO_DB_USERNAME: ratings-dev
   COMMIT_ID: CHANGEME
